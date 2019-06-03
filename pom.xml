@@ -74,7 +74,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.4</doxiaVersion>
+    <doxiaVersion>1.9</doxiaVersion>
     <doxiaSitetoolsVersion>1.4</doxiaSitetoolsVersion>
     <mavenVersion>3.0</mavenVersion>
     <sitePluginVersion>3.3</sitePluginVersion>
