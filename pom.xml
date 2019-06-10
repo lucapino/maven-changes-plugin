@@ -75,7 +75,7 @@ under the License.
 
   <properties>
     <doxiaVersion>1.4</doxiaVersion>
-    <doxiaSitetoolsVersion>1.4</doxiaSitetoolsVersion>
+    <doxiaSitetoolsVersion>1.9</doxiaSitetoolsVersion>
     <mavenVersion>3.0</mavenVersion>
     <sitePluginVersion>3.3</sitePluginVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
