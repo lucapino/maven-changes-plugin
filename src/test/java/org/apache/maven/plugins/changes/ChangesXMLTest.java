@@ -133,7 +133,6 @@ public class ChangesXMLTest
     }
 
     public void testParseChangesFile()
-        throws Exception
     {
         File changesFile = new File( getBasedir() + "/src/test/unit/changes.xml" );
         ChangesXML changesXML = new ChangesXML( changesFile, new MockLog() );
@@ -151,6 +150,8 @@ public class ChangesXMLTest
                 assertEquals( "JIRA-XXX", action.getFixedIssues().get( 0 ).getIssue() );
                 assertEquals( "JIRA-YYY", action.getFixedIssues().get( 1 ).getIssue() );
                 assertEquals( 2, action.getDueTos().size() );
+                // MODELLO-254: <action> element contains both a text (action) and sub-elements
+                assertEquals( "Uploaded documentation on how to use the plugin.", action.getAction() );
             }
         }
     }

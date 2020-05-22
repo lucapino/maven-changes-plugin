@@ -30,7 +30,7 @@ public enum IssueType
 
     private String configurationKey;
 
-    private IssueType( String configurationKey )
+    IssueType( String configurationKey )
     {
         this.configurationKey = configurationKey;
     }

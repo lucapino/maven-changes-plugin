@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -17,4 +17,20 @@
  * under the License.
  */
 
-asfMavenTlpPlgnBuild()
+def patch( String path )
+{
+  File dir = new File( basedir, path );
+  for( File f : dir.listFiles() )
+  {
+    if ( f.isFile() )
+    {
+      content = f.text;
+      content = content.replaceAll( 'on \\d+-\\d+-\\d+ \\d+:\\d+:\\d+', '' );
+      f.write( content );
+    }
+  }
+}
+
+patch( 'target/classes/META-INF/changes/xsd' );
+patch( 'target/generated-sources/modello/org/apache/maven/plugins/changes/model' );
+patch( 'target/generated-sources/modello/org/apache/maven/plugins/changes/model/io/xpp3' );

@@ -191,8 +191,8 @@ public class ChangesMojo
      *
      * @since 2.4
      */
-    @Parameter( defaultValue = "team-list.html" )
-    private String teamlist;
+    @Parameter( defaultValue = "team.html" )
+    private String team;
 
     /**
      */
@@ -317,6 +317,7 @@ public class ChangesMojo
         addIssueLinkTemplate( "SourceForge2", "%URL%/%ISSUE%" );
         addIssueLinkTemplate( "Trac", "%URL%/ticket/%ISSUE%" );
         addIssueLinkTemplate( "Trackplus", "%URL%/printItem.action?key=%ISSUE%" );
+        addIssueLinkTemplate( "Tuleap", "%URL%/?aid=%ISSUE%" );
         addIssueLinkTemplate( "YouTrack", "%URL%/issue/%ISSUE%" );
         // @todo Add more issue management systems here
         // Remember to also add documentation in usage.apt.vm
@@ -328,7 +329,7 @@ public class ChangesMojo
 
         report.setSystem( system );
 
-        report.setTeamlist( teamlist );
+        report.setTeam( team );
 
         report.setUrl( url );
 
@@ -424,11 +425,7 @@ public class ChangesMojo
                 xmlStreamReader.close();
                 xmlStreamReader = null;
             }
-            catch ( IOException e )
-            {
-                throw new MavenReportException( "Exception during filtering changes file : " + e.getMessage(), e );
-            }
-            catch ( MavenFilteringException e )
+            catch ( IOException | MavenFilteringException e )
             {
                 throw new MavenReportException( "Exception during filtering changes file : " + e.getMessage(), e );
             }
@@ -465,7 +462,7 @@ public class ChangesMojo
         throws MavenReportException
     {
         final String pluginResourcesBase = "org/apache/maven/plugins/changes";
-        String resourceNames[] = { "images/add.gif", "images/fix.gif", "images/icon_help_sml.gif", "images/remove.gif",
+        String[] resourceNames = { "images/add.gif", "images/fix.gif", "images/icon_help_sml.gif", "images/remove.gif",
             "images/rss.png", "images/update.gif" };
         try
         {
@@ -487,9 +484,9 @@ public class ChangesMojo
         return ResourceBundle.getBundle( "changes-report", locale, this.getClass().getClassLoader() );
     }
 
-    protected String getTeamlist()
+    protected String getTeam()
     {
-        return teamlist;
+        return team;
     }
 
     private void logIssueLinkTemplatePerSystem( Map<String, String> issueLinkTemplatePerSystem )

@@ -29,8 +29,8 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang.StringUtils;
 
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.sink.SinkEventAttributeSet;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
+import org.apache.maven.doxia.sink.impl.SinkEventAttributeSet;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.plugins.changes.model.Action;
 import org.apache.maven.plugins.changes.model.Component;
@@ -60,7 +60,7 @@ public class ChangesReportGenerator
 
     static final String DEFAULT_ISSUE_SYSTEM_KEY = "default";
 
-    private static final String NO_TEAMLIST = "none";
+    private static final String NO_TEAM = "none";
 
     /**
      * The issue management system to use, for actions that do not specify a system.
@@ -69,7 +69,7 @@ public class ChangesReportGenerator
      */
     private String system;
 
-    private String teamlist;
+    private String team;
 
     private String url;
 
@@ -91,7 +91,7 @@ public class ChangesReportGenerator
 
     public ChangesReportGenerator()
     {
-        issueLinksPerSystem = new HashMap<String, String>();
+        issueLinksPerSystem = new HashMap<>();
     }
 
     public ChangesReportGenerator( List<Release> releaseList )
@@ -120,14 +120,14 @@ public class ChangesReportGenerator
         this.system = system;
     }
 
-    public void setTeamlist( final String teamlist )
+    public void setTeam( final String team )
     {
-        this.teamlist = teamlist;
+        this.team = team;
     }
 
-    public String getTeamlist()
+    public String getTeam()
     {
-        return teamlist;
+        return team;
     }
 
     public void setUrl( String url )
@@ -287,13 +287,13 @@ public class ChangesReportGenerator
 
         sink.tableCell_();
 
-        if ( NO_TEAMLIST.equals( teamlist ) )
+        if ( NO_TEAM.equals( team ) )
         {
             sinkCell( sink, action.getDev() );
         }
         else
         {
-            sinkCellLink( sink, action.getDev(), teamlist + "#" + action.getDev() );
+            sinkCellLink( sink, action.getDev(), team + "#" + action.getDev() );
         }
 
         if ( this.isAddActionDate() )
@@ -316,7 +316,7 @@ public class ChangesReportGenerator
     {
 
         // Create a Map with key : dueTo name, value : dueTo email
-        Map<String, String> namesEmailMap = new LinkedHashMap<String, String>();
+        Map<String, String> namesEmailMap = new LinkedHashMap<>();
 
         // Only add the dueTo specified as attributes, if it has either a dueTo or a dueToEmail
         if ( StringUtils.isNotEmpty( action.getDueTo() ) || StringUtils.isNotEmpty( action.getDueToEmail() ) )
@@ -634,7 +634,7 @@ public class ChangesReportGenerator
     private String parseIssueLink( String issue, String system )
     {
         String parseLink;
-        String issueLink = (String) this.issueLinksPerSystem.get( system );
+        String issueLink = this.issueLinksPerSystem.get( system );
         parseLink = issueLink.replaceFirst( ISSUE_TOKEN, issue );
         if ( parseLink.contains( URL_TOKEN ) )
         {

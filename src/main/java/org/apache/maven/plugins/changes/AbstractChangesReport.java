@@ -20,12 +20,13 @@ package org.apache.maven.plugins.changes;
  */
 
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.doxia.sink.render.RenderingContext;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.site.decoration.Body;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.Skin;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
+import org.apache.maven.doxia.siterenderer.RenderingContext;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.execution.MavenSession;
@@ -37,9 +38,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
-import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
-import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
+import org.apache.maven.shared.transfer.artifact.DefaultArtifactCoordinate;
+import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolverException;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.ReaderFactory;
 
@@ -127,7 +128,7 @@ public abstract class AbstractChangesReport
     @Component
     protected I18N i18n;
 
-    private File getSkinArtifactFile()
+    private Artifact getSkinArtifact()
         throws MojoExecutionException
     {
         Skin skin = Skin.getDefaultSkin();
@@ -139,7 +140,7 @@ public abstract class AbstractChangesReport
         pbr.setRemoteRepositories( project.getRemoteArtifactRepositories() );
         try
         {
-            return resolver.resolveArtifact( pbr, coordinate ).getArtifact().getFile();
+            return resolver.resolveArtifact( pbr, coordinate ).getArtifact();
         }
         catch ( ArtifactResolverException e )
         {
@@ -161,10 +162,10 @@ public abstract class AbstractChangesReport
         {
             DecorationModel model = new DecorationModel();
             model.setBody( new Body() );
-            Map<String, String> attributes = new HashMap<String, String>();
+            Map<String, String> attributes = new HashMap<>();
             attributes.put( "outputEncoding", getOutputEncoding() );
             Locale locale = Locale.getDefault();
-            SiteRenderingContext siteContext = siteRenderer.createContextForSkin( getSkinArtifactFile(), attributes,
+            SiteRenderingContext siteContext = siteRenderer.createContextForSkin( getSkinArtifact(), attributes,
                                                                                   model, getName( locale ), locale );
             siteContext.setOutputEncoding( getOutputEncoding() );
 
@@ -183,20 +184,9 @@ public abstract class AbstractChangesReport
             writer.close();
             writer = null;
 
-            siteRenderer.copyResources( siteContext, new File( project.getBasedir(), "src/site/resources" ),
-                                        outputDirectory );
+            siteRenderer.copyResources( siteContext, outputDirectory );
         }
-        catch ( RendererException e )
-        {
-            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
-                + " report generation.", e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
-                + " report generation.", e );
-        }
-        catch ( MavenReportException e )
+        catch ( RendererException | IOException | MavenReportException e )
         {
             throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
                 + " report generation.", e );
